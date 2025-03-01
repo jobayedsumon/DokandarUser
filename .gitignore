@@ -56,3 +56,6 @@ app.*.map.json
 
 # Ignore Gradle build output directory
 build
+
+# FVM Version Cache
+.fvm/
