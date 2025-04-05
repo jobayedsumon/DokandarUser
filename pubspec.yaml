@@ -1,4 +1,5 @@
-#FLUTTER VERSION: 3.16.0
+# FLUTTER VERSION: 3.16.0
+# JAVA VERSION: 17
 name: dokandar
 description: A Multi-vendor Food. Grocery, eCommerce, Pharmacy & Parcel service.
 publish_to: 'none' #
