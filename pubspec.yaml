@@ -57,6 +57,8 @@ dependencies:
   youtube_player_iframe: ^3.1.0
   card_swiper: ^3.0.1
   audioplayers: ^0.20.1
+  agora_rtc_engine: ^6.5.1
+  permission_handler: ^11.3.1
 
 dependency_overrides:
   modal_bottom_sheet: ^3.0.0-pre
