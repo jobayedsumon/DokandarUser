@@ -200,11 +200,6 @@ class _MenuScreenNewState extends State<MenuScreenNew> {
                         title: 'My Investments'.tr,
                         route: RouteHelper.getMyInvestmentRoute(),
                       ),
-                      PortionWidget(
-                        icon: Images.walletIcon,
-                        title: 'Voice Call'.tr,
-                        route: '/voice-call-screen',
-                      ),
                     ]),
                   )
                 ]),

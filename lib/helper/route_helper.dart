@@ -92,7 +92,6 @@ import '../view/screens/investment/investment_details_screen.dart';
 import '../view/screens/investment/investment_screen.dart';
 import '../view/screens/investment/my_investment_details_screen.dart';
 import '../view/screens/investment/my_investment_screen.dart';
-import '../voice_call.dart';
 
 class RouteHelper {
   static const String initial = '/';
@@ -168,7 +167,6 @@ class RouteHelper {
   static const String offlinePaymentScreen = '/offline-payment-screen';
   static const String flashSaleDetailsScreen = '/flash-sale-details-screen';
   static const String guestTrackOrderScreen = '/guest-track-order-screen';
-  static const String voiceCallScreen = '/voice-call-screen';
 
   static String getInitialRoute({bool fromSplash = false}) =>
       '$initial?from-splash=$fromSplash';
@@ -1003,11 +1001,6 @@ class RouteHelper {
         page: () => GuestTrackOrderScreen(
               orderId: Get.parameters['order_id']!,
               number: Get.parameters['number']!,
-            )),
-    GetPage(
-        name: voiceCallScreen,
-        page: () => const VoiceCallScreen(
-
             )),
   ];
 
