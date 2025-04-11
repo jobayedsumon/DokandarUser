@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_token_service/agora_token_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CallManager {
@@ -35,6 +36,28 @@ class CallManager {
       ),
       uid: localUid,
     );
+    // Send the channel name and token to the remote user
+    _sendIncomingCallNotification(channel, token, remoteUid);
+  }
+
+  // Answers an incoming call
+  Future<void> answerCall(String channelId, String token, int userId) async {
+    await engine.joinChannel(
+      token: token,
+      channelId: channelId,
+      options: const ChannelMediaOptions(
+        autoSubscribeAudio: true,
+        publishMicrophoneTrack: true,
+        clientRoleType: ClientRoleType.clientRoleBroadcaster,
+      ),
+      uid: userId,
+    );
+  }
+
+  // Ends the call
+  Future<void> endCall() async {
+    await engine.leaveChannel();
+    Get.back();
   }
 
   // Leaves the channel and releases resources
@@ -97,4 +120,7 @@ class CallManager {
 
     return (channel, token);
   }
+
+  void _sendIncomingCallNotification(
+      String channel, String token, int remoteUid, String fcmToken) {}
 }
