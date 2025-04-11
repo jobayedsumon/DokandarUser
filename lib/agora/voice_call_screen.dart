@@ -4,7 +4,9 @@ import 'call_manager.dart';
 
 // Voice call Screen Widget
 class VoiceCallScreen extends StatefulWidget {
-  const VoiceCallScreen({Key? key}) : super(key: key);
+  final int userId;
+
+  const VoiceCallScreen(this.userId, {Key? key}) : super(key: key);
 
   @override
   VoiceCallScreenScreenState createState() => VoiceCallScreenScreenState();
@@ -16,12 +18,12 @@ class VoiceCallScreenScreenState extends State<VoiceCallScreen> {
   @override
   void initState() {
     super.initState();
-    callManager.initializeVoiceCalling();
+    callManager.initialize(widget.userId);
   }
 
   @override
   void dispose() {
-    callManager.cleanupAgoraEngine();
+    callManager.cleanup();
     super.dispose();
   }
 
@@ -32,13 +34,13 @@ class VoiceCallScreenScreenState extends State<VoiceCallScreen> {
       children: [
         ElevatedButton(
           onPressed: () async {
-            await callManager.startVoiceCalling(11);
+            await callManager.startCall(11);
           },
           child: const Text('Call 11'),
         ),
         ElevatedButton(
           onPressed: () async {
-            await callManager.startVoiceCalling(4142);
+            await callManager.startCall(4142);
           },
           child: const Text('Call 4142'),
         ),

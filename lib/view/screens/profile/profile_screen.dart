@@ -420,7 +420,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ]),
                                     const SizedBox(
                                         height: Dimensions.paddingSizeLarge),
-                                    const VoiceCallScreen()
+                                    VoiceCallScreen(
+                                        userController.userInfoModel?.id ?? 0)
                                   ]),
                                 ),
                               )
