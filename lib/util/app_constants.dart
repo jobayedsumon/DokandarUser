@@ -15,6 +15,7 @@ class AppConstants {
 
   // static const String baseUrl = 'https://admin.dokandar.online';
   static const String baseUrl = 'http://127.0.0.1:8000';
+
   // static const String baseUrl = 'https://devadmin.dokandar.online';
 
   static const String categoryUri = '/api/v1/categories';
@@ -189,6 +190,10 @@ class AppConstants {
   static const String updateCartUri = '/api/v1/customer/cart/update';
   static const String removeAllCartUri = '/api/v1/customer/cart/remove';
   static const String removeItemCartUri = '/api/v1/customer/cart/remove-item';
+
+  // Push Notification
+  static const String pushNotificationUri =
+      '/api/v1/customer/push-notification';
 
   /// Shared Key
   static const String theme = '6ammart_theme';

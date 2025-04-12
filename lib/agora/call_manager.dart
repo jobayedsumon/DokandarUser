@@ -2,9 +2,14 @@ import 'dart:async';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_token_service/agora_token_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../data/api/api_client.dart';
+import '../util/app_constants.dart';
 
 class CallManager {
   static const appId = "003181bf5feb444897c5df04ec513194";
@@ -12,6 +17,8 @@ class CallManager {
 
   late RtcEngine engine;
   int localUid = 0;
+
+  final ApiClient apiClient = Get.find<ApiClient>();
 
   // Initializes Agora SDK
   Future<void> initialize(int userId) async {
@@ -26,17 +33,17 @@ class CallManager {
     // Generate a unique channel name and token
     final (channel, token) = _generateChannelAndToken(remoteUid);
     // Join a channel
-    await engine.joinChannel(
-      token: token,
-      channelId: channel,
-      options: const ChannelMediaOptions(
-        autoSubscribeAudio: true,
-        publishMicrophoneTrack: true,
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      ),
-      uid: localUid,
-    );
-    // Send the channel name and token to the remote user
+    // await engine.joinChannel(
+    //   token: token,
+    //   channelId: channel,
+    //   options: const ChannelMediaOptions(
+    //     autoSubscribeAudio: true,
+    //     publishMicrophoneTrack: true,
+    //     clientRoleType: ClientRoleType.clientRoleBroadcaster,
+    //   ),
+    //   uid: localUid,
+    // );
+    // Send the channel name and agora token to the remote user
     _sendIncomingCallNotification(channel, token, remoteUid);
   }
 
@@ -107,7 +114,6 @@ class CallManager {
   (String, String) _generateChannelAndToken(int remoteUid) {
     final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final channel = '${localUid}_${remoteUid}_$currentTimestamp';
-    // final channel = 'dokandar';
 
     final token = RtcTokenBuilder.build(
       appId: appId,
@@ -121,6 +127,35 @@ class CallManager {
     return (channel, token);
   }
 
-  void _sendIncomingCallNotification(
-      String channel, String token, int remoteUid, String fcmToken) {}
+  Future<void> _sendIncomingCallNotification(
+      String channel, String token, int userid) async {
+    final payload = {
+      'userId': userid,
+      'title': 'Incoming Call',
+      'body': 'You have an incoming call from $localUid',
+      'data': {
+        'type': 'incoming_call',
+        'callChannel': channel,
+        'callToken': token,
+      },
+    };
+    await apiClient.postData(AppConstants.pushNotificationUri, payload);
+  }
+
+  showIncomingCallNotification(RemoteMessage message,
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
+    flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title ?? 'Incoming Call',
+      message.notification?.body ?? 'You have an incoming call',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'incoming_call_channel',
+          'Incoming Call',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+    );
+  }
 }

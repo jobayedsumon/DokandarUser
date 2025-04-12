@@ -19,6 +19,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+final CallManager callManager = CallManager();
+
 class NotificationHelper {
   static Future<void> initialize(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
@@ -107,19 +109,8 @@ class NotificationHelper {
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
       } else if (message.data['type'] == 'incoming_call') {
-        flutterLocalNotificationsPlugin.show(
-          0,
-          "Incoming Call",
-          "You have an incoming call from ${message.data['callerName']}",
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'incoming_call_channel',
-              'Incoming Call',
-              importance: Importance.high,
-              priority: Priority.high,
-            ),
-          ),
-        );
+        callManager.showIncomingCallNotification(
+            message, flutterLocalNotificationsPlugin);
       } else {
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
@@ -147,6 +138,27 @@ class NotificationHelper {
                   child: NotificationPopUpDialog(payload),
                 ));
       }
+
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'default_channel',
+              'Default',
+              channelDescription:
+                  'Default channel for foreground notifications',
+              importance: Importance.max,
+              priority: Priority.high,
+            ),
+          ),
+        );
+      }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -165,14 +177,6 @@ class NotificationHelper {
               NotificationType.general) {
             Get.offAllNamed(
                 RouteHelper.getNotificationRoute(fromNotification: true));
-          } else if (message.data['type'] == 'incoming_call') {
-            CallManager().answerCall(
-              message.data['channelId'],
-              message.data['token'],
-              int.parse(
-                message.data['userId'],
-              ),
-            );
           } else {
             Get.offAllNamed(RouteHelper.getChatRoute(
                 notificationBody: notificationBody,
@@ -233,7 +237,7 @@ class NotificationHelper {
         }
       } else {
         await showBigTextNotification(
-            title, body!, orderID, notificationBody, fln);
+            title, body ?? '', orderID, notificationBody, fln);
       }
     }
   }
@@ -352,7 +356,9 @@ class NotificationHelper {
         deliverymanId: data['sender_type'] == 'delivery_man' ? 0 : null,
         adminId: data['sender_type'] == 'admin' ? 0 : null,
         restaurantId: data['sender_type'] == 'vendor' ? 0 : null,
-        conversationId: int.parse(data['conversation_id'].toString()),
+        conversationId: data['conversation_id'] != null
+            ? int.parse(data['conversation_id'].toString())
+            : 0,
       );
     }
   }
@@ -363,12 +369,21 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
     print(
         "onBackground: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
   }
-  // var androidInitialize = new AndroidInitializationSettings('notification_icon');
-  // var iOSInitialize = new IOSInitializationSettings();
-  // var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
-  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  // flutterLocalNotificationsPlugin.initialize(initializationsSettings);
-  // NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin, true);
+  var androidInitialize =
+      const AndroidInitializationSettings('notification_icon');
+  var iOSInitialize = const DarwinInitializationSettings();
+  var initializationsSettings =
+      InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin.initialize(initializationsSettings);
+  if (message.data['type'] == 'incoming_call') {
+    callManager.showIncomingCallNotification(
+        message, flutterLocalNotificationsPlugin);
+  } else {
+    NotificationHelper.showNotification(
+        message, flutterLocalNotificationsPlugin, true);
+  }
 }
 
 class PayloadModel {
