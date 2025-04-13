@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dokandar/agora/call_manager.dart';
 import 'package:dokandar/controller/auth_controller.dart';
 import 'package:dokandar/controller/chat_controller.dart';
 import 'package:dokandar/controller/notification_controller.dart';
@@ -18,8 +17,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-
-final CallManager callManager = CallManager();
 
 class NotificationHelper {
   static Future<void> initialize(
@@ -108,10 +105,7 @@ class NotificationHelper {
         }
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
-      } else if (message.data['type'] == 'incoming_call') {
-        callManager.showIncomingCallNotification(
-            message, flutterLocalNotificationsPlugin);
-      } else {
+      } else if (message.data['type'] != 'incoming_call') {
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
         if (Get.find<AuthController>().isLoggedIn()) {
@@ -139,26 +133,26 @@ class NotificationHelper {
                 ));
       }
 
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'default_channel',
-              'Default',
-              channelDescription:
-                  'Default channel for foreground notifications',
-              importance: Importance.max,
-              priority: Priority.high,
-            ),
-          ),
-        );
-      }
+      // RemoteNotification? notification = message.notification;
+      // AndroidNotification? android = message.notification?.android;
+      //
+      // if (notification != null && android != null) {
+      //   flutterLocalNotificationsPlugin.show(
+      //     notification.hashCode,
+      //     notification.title,
+      //     notification.body,
+      //     const NotificationDetails(
+      //       android: AndroidNotificationDetails(
+      //         'default_channel',
+      //         'Default',
+      //         channelDescription:
+      //             'Default channel for foreground notifications',
+      //         importance: Importance.max,
+      //         priority: Priority.high,
+      //       ),
+      //     ),
+      //   );
+      // }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -369,21 +363,16 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
     print(
         "onBackground: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
   }
-  var androidInitialize =
-      const AndroidInitializationSettings('notification_icon');
-  var iOSInitialize = const DarwinInitializationSettings();
-  var initializationsSettings =
-      InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  flutterLocalNotificationsPlugin.initialize(initializationsSettings);
-  if (message.data['type'] == 'incoming_call') {
-    callManager.showIncomingCallNotification(
-        message, flutterLocalNotificationsPlugin);
-  } else {
-    NotificationHelper.showNotification(
-        message, flutterLocalNotificationsPlugin, true);
-  }
+  // var androidInitialize =
+  //     const AndroidInitializationSettings('notification_icon');
+  // var iOSInitialize = const DarwinInitializationSettings();
+  // var initializationsSettings =
+  //     InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
+  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
+  // flutterLocalNotificationsPlugin.initialize(initializationsSettings);
+  // NotificationHelper.showNotification(
+  //     message, flutterLocalNotificationsPlugin, true);
 }
 
 class PayloadModel {

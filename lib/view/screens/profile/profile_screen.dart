@@ -1,4 +1,3 @@
-import 'package:dokandar/agora/voice_call_screen.dart';
 import 'package:dokandar/controller/auth_controller.dart';
 import 'package:dokandar/controller/splash_controller.dart';
 import 'package:dokandar/controller/theme_controller.dart';
@@ -22,6 +21,8 @@ import 'package:dokandar/view/screens/profile/widget/profile_card.dart';
 import 'package:dokandar/view/screens/profile/widget/web_profile_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../agora/voice_call_test.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -420,8 +421,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ]),
                                     const SizedBox(
                                         height: Dimensions.paddingSizeLarge),
-                                    VoiceCallScreen(
-                                        userController.userInfoModel?.id ?? 0)
+                                    const VoiceCallTest()
                                   ]),
                                 ),
                               )

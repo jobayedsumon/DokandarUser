@@ -1,53 +1,45 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dokandar/agora/CallControlButton.dart';
 import 'package:dokandar/agora/call_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class VoiceCallScreen extends StatefulWidget {
-  final String name;
-  final String image;
+class IncomingCallScreen extends StatefulWidget {
+  final String channel;
+  final String token;
+  final String callerName;
+  final String callerImage;
 
-  const VoiceCallScreen({
+  const IncomingCallScreen({
     super.key,
-    required this.name,
-    required this.image,
+    required this.channel,
+    required this.token,
+    required this.callerName,
+    required this.callerImage,
   });
 
   @override
-  State<VoiceCallScreen> createState() => _VoiceCallScreenState();
+  State<IncomingCallScreen> createState() => _IncomingCallScreenState();
 }
 
-class _VoiceCallScreenState extends State<VoiceCallScreen> {
-  bool isMuted = false;
-  bool isSpeakerOn = false;
+class _IncomingCallScreenState extends State<IncomingCallScreen> {
   final CallManager callManager = Get.find<CallManager>();
+  final AudioCache _audioCache = AudioCache(prefix: 'assets/');
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _audioCache.play('notification.wav');
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    callManager.endCall();
+    // audio.stop();
     super.dispose();
-  }
-
-  void _toggleMute() {
-    setState(() {
-      isMuted = !isMuted;
-    });
-    callManager.toggleMicrophone(isMuted);
-  }
-
-  void _toggleSpeaker() {
-    setState(() {
-      isSpeakerOn = !isSpeakerOn;
-    });
-    callManager.toggleSpeaker(isSpeakerOn);
   }
 
   @override
@@ -61,11 +53,11 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
               const SizedBox(height: 60),
               CircleAvatar(
                 radius: 70,
-                backgroundImage: NetworkImage(widget.image),
+                backgroundImage: NetworkImage(widget.callerImage),
               ),
               const SizedBox(height: 24),
               Text(
-                widget.name,
+                widget.callerName,
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 26,
@@ -73,7 +65,7 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
               ),
               const SizedBox(height: 10),
               const Text(
-                "Calling...",
+                "Incoming Call...",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
               const Spacer(),
@@ -83,22 +75,23 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CallControlButton(
-                      icon: isMuted ? Icons.mic_off : Icons.mic,
-                      color: isMuted ? Colors.red : Colors.white,
-                      background: const Color(0xFF2C2C2E),
-                      onTap: _toggleMute,
-                    ),
-                    CallControlButton(
                       icon: Icons.call_end,
                       color: Colors.red,
                       background: Colors.white,
                       onTap: callManager.endCall,
                     ),
                     CallControlButton(
-                      icon: isSpeakerOn ? Icons.volume_up : Icons.hearing,
-                      color: isSpeakerOn ? Colors.green : Colors.white,
-                      background: const Color(0xFF2C2C2E),
-                      onTap: _toggleSpeaker,
+                      icon: Icons.call,
+                      color: Colors.white,
+                      background: Colors.green,
+                      onTap: () {
+                        callManager.answerCall(
+                          widget.channel,
+                          widget.token,
+                          widget.callerName,
+                          widget.callerImage,
+                        );
+                      },
                     ),
                   ],
                 ),
