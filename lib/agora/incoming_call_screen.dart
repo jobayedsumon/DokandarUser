@@ -26,19 +26,21 @@ class IncomingCallScreen extends StatefulWidget {
 class _IncomingCallScreenState extends State<IncomingCallScreen> {
   final CallManager callManager = Get.find<CallManager>();
   final AudioCache _audioCache = AudioCache(prefix: 'assets/');
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  late AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    _audioCache.play('notification.wav');
+    () async {
+      _audioPlayer = await _audioCache.loop('notification.wav');
+    }();
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    // audio.stop();
+    _audioPlayer.stop();
     super.dispose();
   }
 

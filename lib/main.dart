@@ -133,6 +133,7 @@ class _MyAppState extends State<MyApp> {
           UserController userController = Get.find<UserController>();
           await userController.getUserInfo();
           Get.put(CallManager(userController.userInfoModel!), permanent: true);
+          Get.find<CallManager>();
         }
       }
     });

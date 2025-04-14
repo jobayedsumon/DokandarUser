@@ -78,6 +78,7 @@ flutter:
     - assets/image/
     - assets/language/
     - assets/notification.wav
+    - assets/calling.mp3
 
   fonts:
     - family: Roboto

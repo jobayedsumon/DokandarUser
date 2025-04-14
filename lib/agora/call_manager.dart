@@ -167,11 +167,11 @@ class CallManager {
       ),
     );
     // Generate a unique channel name (callerId_calleeId_timestamp) and token
-    final (channel, token) = _generateChannelAndToken(calleeId);
+    // final (channel, token) = _generateChannelAndToken(calleeId);
     // Join a channel
-    await _joinChannel(channel, token, _loggedInUser.id!);
+    // await _joinChannel(channel, token, _loggedInUser.id!);
     // Send the channel name and agora token to the remote user
-    _sendIncomingCallNotification(calleeId, channel, token);
+    // _sendIncomingCallNotification(calleeId, channel, token);
   }
 
   // Answers an incoming call
@@ -188,6 +188,7 @@ class CallManager {
       () => VoiceCallScreen(
         name: callerName,
         image: callerImage,
+        inCall: true,
       ),
     );
   }
