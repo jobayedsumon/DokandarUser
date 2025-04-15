@@ -7,14 +7,12 @@ import 'package:get/get.dart';
 
 class IncomingCallScreen extends StatefulWidget {
   final String channel;
-  final String token;
   final String callerName;
   final String callerImage;
 
   const IncomingCallScreen({
     super.key,
     required this.channel,
-    required this.token,
     required this.callerName,
     required this.callerImage,
   });
@@ -53,10 +51,10 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
           child: Column(
             children: [
               const SizedBox(height: 60),
-              CircleAvatar(
-                radius: 70,
-                backgroundImage: NetworkImage(widget.callerImage),
-              ),
+              // CircleAvatar(
+              //   radius: 70,
+              //   backgroundImage: NetworkImage(widget.callerImage),
+              // ),
               const SizedBox(height: 24),
               Text(
                 widget.callerName,
@@ -89,7 +87,6 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
                       onTap: () {
                         callManager.answerCall(
                           widget.channel,
-                          widget.token,
                           widget.callerName,
                           widget.callerImage,
                         );

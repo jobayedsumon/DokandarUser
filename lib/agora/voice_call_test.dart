@@ -1,5 +1,4 @@
 import 'package:dokandar/agora/call_manager.dart';
-import 'package:dokandar/agora/incoming_call_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,16 +15,11 @@ class VoiceCallTest extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              Get.to(IncomingCallScreen(
-                  channel: 'channel',
-                  token: 'token',
-                  callerName: 'callerName',
-                  callerImage: 'callerImage'));
-              // callManager.startCall(
-              //   11,
-              //   'Jobayed Sumon',
-              //   'https://placehold.co/100x100/white/red/png?text=JS',
-              // );
+              callManager.startCall(
+                11,
+                'Jobayed Sumon',
+                'https://placehold.co/100x100/white/red/png?text=JS',
+              );
             },
             child: const Text('Call Jobayed Sumon (11)'),
           ),

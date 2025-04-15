@@ -34,7 +34,7 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
   final CallManager callManager = Get.find<CallManager>();
 
   final AudioCache _audioCache = AudioCache(prefix: 'assets/');
-  late AudioPlayer _audioPlayer;
+  late AudioPlayer _audioPlayer = AudioPlayer();
 
   Timer? _callTimeOut; // Timer to enforce the 30 seconds call limit
 
@@ -51,11 +51,14 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
       // Start the timeout timer.
       _startCallTimeout();
     }
+    // Set up the call manager callbacks
+    callManager.setOnCallConnected(_onCallConnected);
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    callManager.clearCallbacks();
     callManager.endCall();
     _audioPlayer.stop();
     _callTimeOut?.cancel();

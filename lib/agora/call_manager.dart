@@ -23,6 +23,16 @@ class CallManager {
 
   final UserInfoModel _loggedInUser;
 
+  VoidCallback? onCallConnected;
+
+  void setOnCallConnected(VoidCallback callback) {
+    onCallConnected = callback;
+  }
+
+  void clearCallbacks() {
+    onCallConnected = null;
+  }
+
   CallManager(this._loggedInUser) {
     // Initialize Agora
     _initializeAgora();
@@ -60,6 +70,7 @@ class CallManager {
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           debugPrint("AGORA: Remote user $remoteUid joined");
+          onCallConnected?.call();
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
@@ -72,6 +83,7 @@ class CallManager {
         },
         onError: (ErrorCodeType errorCodeType, String errorMessage) {
           debugPrint("AGORA: Error $errorCodeType: $errorMessage");
+          endCall();
         },
       ),
     );
@@ -94,7 +106,6 @@ class CallManager {
       Get.to(
         () => IncomingCallScreen(
           channel: message.data['channel'],
-          token: message.data['token'],
           callerName: message.data['callerName'],
           callerImage: message.data['callerImage'],
         ),
@@ -102,21 +113,16 @@ class CallManager {
     }
   }
 
-  /// Pass the calleeId to generate a unique channel name and token
-  (String, String) _generateChannelAndToken(int calleeId) {
-    final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final channel = '${_loggedInUser.id!}_${calleeId}_$currentTimestamp';
-
-    final token = RtcTokenBuilder.build(
+  /// Pass the channel to generate a unique token for the logged in user
+  String _generateToken(String channel) {
+    return RtcTokenBuilder.build(
       appId: _appId,
       appCertificate: _appCertificate,
       channelName: channel,
-      uid: _loggedInUser.id!.toString(),
+      uid: _loggedInUser.id.toString(),
       role: RtcRole.publisher,
-      expireTimestamp: currentTimestamp + 3600,
+      expireTimestamp: (DateTime.now().millisecondsSinceEpoch ~/ 1000) + 3600,
     );
-
-    return (channel, token);
   }
 
   Future<void> _joinChannel(String channel, String token, int userId) async {
@@ -144,7 +150,6 @@ class CallManager {
       'data': {
         'type': 'incoming_call',
         'channel': channel,
-        'token': token,
         'callerName': '${_loggedInUser.fName} ${_loggedInUser.lName}',
         'callerImage': _loggedInUser.image ??
             'https://placehold.co/100x100/white/red/png?text=${_loggedInUser.fName?[0]}+${_loggedInUser.lName?[0]}',
@@ -167,22 +172,24 @@ class CallManager {
       ),
     );
     // Generate a unique channel name (callerId_calleeId_timestamp) and token
-    // final (channel, token) = _generateChannelAndToken(calleeId);
+    final int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final String channel = '${_loggedInUser.id}_${calleeId}_$currentTimestamp';
+    final String token = _generateToken(channel);
     // Join a channel
-    // await _joinChannel(channel, token, _loggedInUser.id!);
+    await _joinChannel(channel, token, _loggedInUser.id!);
     // Send the channel name and agora token to the remote user
-    // _sendIncomingCallNotification(calleeId, channel, token);
+    _sendIncomingCallNotification(calleeId, channel, token);
   }
 
   // Answers an incoming call
   Future<void> answerCall(
     String channel,
-    String token,
     String callerName,
     String callerImage,
   ) async {
+    final String token = _generateToken(channel);
     // Join the channel
-    await _joinChannel(token, channel, _loggedInUser.id!);
+    await _joinChannel(channel, token, _loggedInUser.id!);
     // Navigate to the voice call screen
     Get.off(
       () => VoiceCallScreen(
