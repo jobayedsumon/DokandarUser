@@ -9,15 +9,15 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class VoiceCallScreen extends StatefulWidget {
+  final int userId;
   final String name;
   final String image;
-  final bool inCall;
 
   const VoiceCallScreen({
     super.key,
+    required this.userId,
     required this.name,
     required this.image,
-    this.inCall = false,
   });
 
   @override
@@ -41,25 +41,20 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    _inCall = widget.inCall;
-    if (_inCall) {
-      _onCallConnected();
-    } else {
-      // Play the looping tone
-      _playTone();
-      // Start the timeout timer.
-      _startCallTimeout();
-    }
-    // Set up the call manager callbacks
+    // Set up the call manager callback for when the call is connected.
     callManager.setOnCallConnected(_onCallConnected);
+
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // Play the looping tone
+    _playTone();
+    // Start the timeout timer.
+    _startCallTimeout();
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     callManager.clearCallbacks();
-    callManager.endCall();
     _audioPlayer.stop();
     _callTimeOut?.cancel();
     _inCallTimer?.cancel();
@@ -84,17 +79,15 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
 
   /// Call this method when the call is successfully connected.
   void _onCallConnected() {
-    if (!_inCall) {
-      setState(() {
-        _inCall = true;
-      });
-      // Cancel the timeout since the call has been connected.
-      _callTimeOut?.cancel();
-      // Stop the calling tone.
-      _audioPlayer.stop();
-      // Start counting call duration
-      _startInCallTimer();
-    }
+    setState(() {
+      _inCall = true;
+    });
+    // Cancel the timeout since the call has been connected.
+    _callTimeOut?.cancel();
+    // Stop the calling tone.
+    _audioPlayer.stop();
+    // Start counting call duration
+    _startInCallTimer();
   }
 
   void _toggleMute() {
@@ -176,7 +169,9 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
                       icon: Icons.call_end,
                       color: Colors.red,
                       background: Colors.white,
-                      onTap: callManager.endCall,
+                      onTap: () {
+                        callManager.endCall(userId: widget.userId);
+                      },
                     ),
                     CallControlButton(
                       icon: isSpeakerOn ? Icons.volume_up : Icons.hearing,

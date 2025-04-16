@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dokandar/agora/CallControlButton.dart';
 import 'package:dokandar/agora/call_manager.dart';
@@ -6,12 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class IncomingCallScreen extends StatefulWidget {
+  final int callerId;
   final String channel;
   final String callerName;
   final String callerImage;
 
   const IncomingCallScreen({
     super.key,
+    required this.callerId,
     required this.channel,
     required this.callerName,
     required this.callerImage,
@@ -25,20 +29,37 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
   final CallManager callManager = Get.find<CallManager>();
   final AudioCache _audioCache = AudioCache(prefix: 'assets/');
   late AudioPlayer _audioPlayer = AudioPlayer();
+  Timer? _callTimeout;
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    () async {
-      _audioPlayer = await _audioCache.loop('notification.wav');
-    }();
+    _playTone();
+    _startTimeout();
+  }
+
+  void _playTone() async {
+    _audioPlayer = await _audioCache.loop('notification.wav');
+  }
+
+  void _startTimeout() {
+    _callTimeout = Timer(const Duration(seconds: 30), () {
+      // Auto reject the call after 30 seconds
+      callManager.endCall();
+      _audioPlayer.stop();
+    });
+  }
+
+  void _cancelTimeout() {
+    _callTimeout?.cancel();
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     _audioPlayer.stop();
+    _cancelTimeout();
     super.dispose();
   }
 
@@ -51,10 +72,10 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
           child: Column(
             children: [
               const SizedBox(height: 60),
-              // CircleAvatar(
-              //   radius: 70,
-              //   backgroundImage: NetworkImage(widget.callerImage),
-              // ),
+              CircleAvatar(
+                radius: 70,
+                backgroundImage: NetworkImage(widget.callerImage),
+              ),
               const SizedBox(height: 24),
               Text(
                 widget.callerName,
@@ -78,14 +99,21 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
                       icon: Icons.call_end,
                       color: Colors.red,
                       background: Colors.white,
-                      onTap: callManager.endCall,
+                      onTap: () {
+                        _cancelTimeout();
+                        _audioPlayer.stop();
+                        callManager.endCall(userId: widget.callerId);
+                      },
                     ),
                     CallControlButton(
                       icon: Icons.call,
                       color: Colors.white,
                       background: Colors.green,
                       onTap: () {
+                        _cancelTimeout();
+                        _audioPlayer.stop();
                         callManager.answerCall(
+                          widget.callerId,
                           widget.channel,
                           widget.callerName,
                           widget.callerImage,

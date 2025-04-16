@@ -6,12 +6,13 @@ import 'package:dokandar/data/model/response/vehicle_model.dart';
 import 'package:dokandar/data/repository/rider_repo.dart';
 import 'package:dokandar/view/base/custom_snackbar.dart';
 
-enum PageState {orderDetails, payment, complete}
+enum PageState { orderDetails, payment, complete }
 
-enum PaymentMethodName  {digitalPayment, cod}
+enum PaymentMethodName { digitalPayment, cod }
 
-class BookingCheckoutController extends GetxController implements GetxService{
+class BookingCheckoutController extends GetxController implements GetxService {
   final RiderRepo riderRepo;
+
   BookingCheckoutController({required this.riderRepo});
 
   PageState currentPage = PageState.orderDetails;
@@ -26,52 +27,58 @@ class BookingCheckoutController extends GetxController implements GetxService{
   int? _tripId;
 
   bool get showCouponSection => _showCouponSection;
+
   bool get isLoading => _isLoading;
+
   double? get couponDiscount => _couponDiscount;
+
   int get paymentMethodIndex => _paymentMethodIndex;
+
   int? get tripId => _tripId;
 
   void setPaymentMethod(int index, {bool isUpdate = true}) {
     _paymentMethodIndex = index;
-    if(isUpdate){
+    if (isUpdate) {
       update();
     }
   }
 
-  void showHideCoupon(){
+  void showHideCoupon() {
     _showCouponSection = !_showCouponSection;
     update();
   }
 
-  void setCouponDiscount(double? discount){
+  void setCouponDiscount(double? discount) {
     _couponDiscount = discount;
     update();
   }
 
-  void cancelPaymentOption(){
+  void cancelPaymentOption() {
     cancelPayment = true;
     update();
   }
 
-  void updateState(PageState currentPage,{bool shouldUpdate = true}){
+  void updateState(PageState currentPage, {bool shouldUpdate = true}) {
     if (kDebugMode) {
-      print('--------------$currentPage');
+      // print('--------------$currentPage');
     }
-    currentPage=currentPage;
-    if(shouldUpdate){
+    currentPage = currentPage;
+    if (shouldUpdate) {
       update();
     }
   }
 
-  void updateDigitalPaymentOption(PaymentMethodName paymentMethodName,{bool shouldUpdate = true}){
+  void updateDigitalPaymentOption(PaymentMethodName paymentMethodName,
+      {bool shouldUpdate = true}) {
     selectedPaymentMethod = paymentMethodName;
-    if(shouldUpdate){
+    if (shouldUpdate) {
       update();
     }
   }
 
-
-  Future<bool> placeTrip({required UserInformationBody filterBody, required Vehicles vehicle}) async {
+  Future<bool> placeTrip(
+      {required UserInformationBody filterBody,
+      required Vehicles vehicle}) async {
     _tripId = null;
     bool success = false;
     _isLoading = true;
@@ -85,7 +92,11 @@ class BookingCheckoutController extends GetxController implements GetxService{
       'schedule_at': filterBody.rentTime,
       'distance': filterBody.distance.toString(),
       'filter_type': filterBody.filterType,
-      'payment_method': _paymentMethodIndex == 0 ? 'cash_on_delivery' : _paymentMethodIndex == 1 ? 'digital_payment' : 'wallet',
+      'payment_method': _paymentMethodIndex == 0
+          ? 'cash_on_delivery'
+          : _paymentMethodIndex == 1
+              ? 'digital_payment'
+              : 'wallet',
       'vehicle_id': vehicle.id.toString(),
       'provider_id': vehicle.providerId.toString(),
     };
@@ -102,6 +113,4 @@ class BookingCheckoutController extends GetxController implements GetxService{
     update();
     return success;
   }
-
-
 }

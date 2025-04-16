@@ -72,15 +72,15 @@ class PaymentScreenState extends State<InvestmentPaymentWebView> {
               initialUserScripts: UnmodifiableListView<UserScript>([]),
               pullToRefreshController: pullToRefreshController,
               initialOptions: InAppWebViewGroupOptions(
-                  crossPlatform: InAppWebViewOptions(
-                    userAgent:
-                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36',
-                  ),
-                  android:
-                      AndroidInAppWebViewOptions(useHybridComposition: true),
+                crossPlatform: InAppWebViewOptions(
+                  userAgent:
+                      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36',
+                ),
+                android: AndroidInAppWebViewOptions(useHybridComposition: true),
               ),
               onReceivedServerTrustAuthRequest: (controller, challenge) async {
-                return ServerTrustAuthResponse(action: ServerTrustAuthResponseAction.PROCEED);
+                return ServerTrustAuthResponse(
+                    action: ServerTrustAuthResponseAction.PROCEED);
               },
               onWebViewCreated: (controller) async {
                 webViewController = controller;
@@ -163,7 +163,7 @@ class PaymentScreenState extends State<InvestmentPaymentWebView> {
                 // });
               },
               onConsoleMessage: (controller, consoleMessage) {
-                debugPrint(consoleMessage.message);
+                // debugPrint(consoleMessage.message);
               },
             ),
             _isLoading

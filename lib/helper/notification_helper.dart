@@ -61,9 +61,8 @@ class NotificationHelper {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (kDebugMode) {
-        print(
-            "onMessage: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
-        print("onMessage type: ${message.data['type']}/${message.data}");
+        // print("onMessage: ${message.notification!.title}/${message.notification!.body}/${message.notification!.titleLocKey}");
+        // print("onMessage type: ${message.data['type']}/${message.data}");
       }
       if (message.data['type'] == 'message' &&
           Get.currentRoute.startsWith(RouteHelper.messages)) {
@@ -105,7 +104,8 @@ class NotificationHelper {
         }
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
-      } else if (message.data['type'] != 'incoming_call') {
+      } else if (message.data['type'] != 'incoming_call' &&
+          message.data['type'] != 'call_ended') {
         NotificationHelper.showNotification(
             message, flutterLocalNotificationsPlugin, false);
         if (Get.find<AuthController>().isLoggedIn()) {

@@ -122,7 +122,8 @@ class PaymentScreenState extends State<PaymentWebViewScreen> {
                 webViewController = controller;
               },
               onReceivedServerTrustAuthRequest: (controller, challenge) async {
-                return ServerTrustAuthResponse(action: ServerTrustAuthResponseAction.PROCEED);
+                return ServerTrustAuthResponse(
+                    action: ServerTrustAuthResponseAction.PROCEED);
               },
               onLoadStart: (controller, url) async {
                 // _redirect(url.toString());
@@ -178,7 +179,7 @@ class PaymentScreenState extends State<PaymentWebViewScreen> {
                 // });
               },
               onConsoleMessage: (controller, consoleMessage) {
-                debugPrint(consoleMessage.message);
+                // debugPrint(consoleMessage.message);
               },
             ),
             _isLoading

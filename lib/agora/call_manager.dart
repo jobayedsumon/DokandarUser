@@ -66,24 +66,25 @@ class CallManager {
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("AGORA: Local user ${connection.localUid} joined");
+          debugPrint(
+              "AGORA: Local user ${connection.localUid} joined ${connection.channelId}");
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("AGORA: Remote user $remoteUid joined");
+          debugPrint(
+              "AGORA: Remote user $remoteUid joined ${connection.channelId}");
           onCallConnected?.call();
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          debugPrint("AGORA: Remote user $remoteUid left");
-          endCall();
+          debugPrint(
+              "AGORA: Remote user $remoteUid left ${connection.channelId}");
         },
         onLeaveChannel: (RtcConnection connection, RtcStats stats) {
-          debugPrint("AGORA: Local user ${connection.localUid} left");
-          endCall();
+          debugPrint(
+              "AGORA: Local user ${connection.localUid} left ${connection.channelId}");
         },
         onError: (ErrorCodeType errorCodeType, String errorMessage) {
           debugPrint("AGORA: Error $errorCodeType: $errorMessage");
-          endCall();
         },
       ),
     );
@@ -91,25 +92,29 @@ class CallManager {
 
   void _initializeFirebase() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleIncomingCall(message);
+      _handleIncomingCallAndCallEnded(message);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _handleIncomingCall(message);
+      _handleIncomingCallAndCallEnded(message);
     });
     FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
-      _handleIncomingCall(message);
+      _handleIncomingCallAndCallEnded(message);
     });
   }
 
-  void _handleIncomingCall(RemoteMessage message) {
+  void _handleIncomingCallAndCallEnded(RemoteMessage message) {
     if (message.data['type'] == 'incoming_call') {
       Get.to(
         () => IncomingCallScreen(
+          callerId: int.parse(message.data['callerId']),
           channel: message.data['channel'],
           callerName: message.data['callerName'],
           callerImage: message.data['callerImage'],
         ),
       );
+    }
+    if (message.data['type'] == 'call_ended') {
+      endCall();
     }
   }
 
@@ -150,6 +155,7 @@ class CallManager {
       'data': {
         'type': 'incoming_call',
         'channel': channel,
+        'callerId': _loggedInUser.id.toString(),
         'callerName': '${_loggedInUser.fName} ${_loggedInUser.lName}',
         'callerImage': _loggedInUser.image ??
             'https://placehold.co/100x100/white/red/png?text=${_loggedInUser.fName?[0]}+${_loggedInUser.lName?[0]}',
@@ -167,6 +173,7 @@ class CallManager {
     // Navigate to the voice call screen
     Get.to(
       () => VoiceCallScreen(
+        userId: calleeId,
         name: calleeName,
         image: calleeImage,
       ),
@@ -183,6 +190,7 @@ class CallManager {
 
   // Answers an incoming call
   Future<void> answerCall(
+    int callerId,
     String channel,
     String callerName,
     String callerImage,
@@ -193,18 +201,36 @@ class CallManager {
     // Navigate to the voice call screen
     Get.off(
       () => VoiceCallScreen(
+        userId: callerId,
         name: callerName,
         image: callerImage,
-        inCall: true,
       ),
     );
   }
 
   // Ends the call
-  Future<void> endCall() async {
+  Future<void> endCall({int? userId}) async {
     await _engine.leaveChannel();
     await _engine.release();
+    _initializeAgora();
     Get.back();
+
+    if (userId != null) {
+      // Send a notification to the other user that the call has ended
+      await _sendCallEndedNotification(userId);
+    }
+  }
+
+  Future<void> _sendCallEndedNotification(int userId) async {
+    final payload = {
+      'userId': userId,
+      'title': 'Call Ended',
+      'body': 'The call has ended',
+      'data': {
+        'type': 'call_ended',
+      },
+    };
+    await _apiClient.postData(AppConstants.pushNotificationUri, payload);
   }
 
   // Toggles the microphone state
