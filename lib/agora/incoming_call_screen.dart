@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 class IncomingCallScreen extends StatefulWidget {
   final int callerId;
+  final String callerType;
   final String channel;
   final String callerName;
   final String callerImage;
@@ -16,6 +17,7 @@ class IncomingCallScreen extends StatefulWidget {
   const IncomingCallScreen({
     super.key,
     required this.callerId,
+    required this.callerType,
     required this.channel,
     required this.callerName,
     required this.callerImage,
@@ -102,7 +104,9 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
                       onTap: () {
                         _cancelTimeout();
                         _audioPlayer.stop();
-                        callManager.endCall(userId: widget.callerId);
+                        callManager.endCall(
+                            userId: widget.callerId,
+                            userType: widget.callerType);
                       },
                     ),
                     CallControlButton(

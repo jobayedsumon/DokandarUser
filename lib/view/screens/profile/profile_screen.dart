@@ -22,8 +22,6 @@ import 'package:dokandar/view/screens/profile/widget/web_profile_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../agora/voice_call_test.dart';
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -419,9 +417,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   fontSize: Dimensions
                                                       .fontSizeExtraSmall)),
                                         ]),
-                                    const SizedBox(
-                                        height: Dimensions.paddingSizeLarge),
-                                    const VoiceCallTest()
                                   ]),
                                 ),
                               )

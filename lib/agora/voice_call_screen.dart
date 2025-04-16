@@ -10,12 +10,14 @@ import 'package:get/get.dart';
 
 class VoiceCallScreen extends StatefulWidget {
   final int userId;
+  final String userType;
   final String name;
   final String image;
 
   const VoiceCallScreen({
     super.key,
     required this.userId,
+    required this.userType,
     required this.name,
     required this.image,
   });
@@ -170,7 +172,8 @@ class _VoiceCallScreenState extends State<VoiceCallScreen> {
                       color: Colors.red,
                       background: Colors.white,
                       onTap: () {
-                        callManager.endCall(userId: widget.userId);
+                        callManager.endCall(
+                            userId: widget.userId, userType: widget.userType);
                       },
                     ),
                     CallControlButton(

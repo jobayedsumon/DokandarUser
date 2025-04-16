@@ -107,6 +107,7 @@ class CallManager {
       Get.to(
         () => IncomingCallScreen(
           callerId: int.parse(message.data['callerId']),
+          callerType: message.data['callerType'],
           channel: message.data['channel'],
           callerName: message.data['callerName'],
           callerImage: message.data['callerImage'],
@@ -145,17 +146,20 @@ class CallManager {
 
   Future<void> _sendIncomingCallNotification(
     int calleeId,
+    String calleeType,
     String channel,
     String token,
   ) async {
     final payload = {
       'userId': calleeId,
+      'userType': calleeType,
       'title': 'Incoming Call',
       'body': 'You have an incoming call',
       'data': {
         'type': 'incoming_call',
         'channel': channel,
         'callerId': _loggedInUser.id.toString(),
+        'callerType': 'customer',
         'callerName': '${_loggedInUser.fName} ${_loggedInUser.lName}',
         'callerImage': _loggedInUser.image ??
             'https://placehold.co/100x100/white/red/png?text=${_loggedInUser.fName?[0]}+${_loggedInUser.lName?[0]}',
@@ -167,6 +171,7 @@ class CallManager {
   // Starts voice calling
   Future<void> startCall(
     int calleeId,
+    String calleeType,
     String calleeName,
     String calleeImage,
   ) async {
@@ -174,6 +179,7 @@ class CallManager {
     Get.to(
       () => VoiceCallScreen(
         userId: calleeId,
+        userType: calleeType,
         name: calleeName,
         image: calleeImage,
       ),
@@ -185,7 +191,7 @@ class CallManager {
     // Join a channel
     await _joinChannel(channel, token, _loggedInUser.id!);
     // Send the channel name and agora token to the remote user
-    _sendIncomingCallNotification(calleeId, channel, token);
+    _sendIncomingCallNotification(calleeId, calleeType, channel, token);
   }
 
   // Answers an incoming call
@@ -202,6 +208,7 @@ class CallManager {
     Get.off(
       () => VoiceCallScreen(
         userId: callerId,
+        userType: 'customer',
         name: callerName,
         image: callerImage,
       ),
@@ -209,21 +216,22 @@ class CallManager {
   }
 
   // Ends the call
-  Future<void> endCall({int? userId}) async {
+  Future<void> endCall({int? userId, String? userType}) async {
     await _engine.leaveChannel();
     await _engine.release();
     _initializeAgora();
     Get.back();
 
-    if (userId != null) {
+    if (userId != null && userType != null) {
       // Send a notification to the other user that the call has ended
-      await _sendCallEndedNotification(userId);
+      await _sendCallEndedNotification(userId, userType);
     }
   }
 
-  Future<void> _sendCallEndedNotification(int userId) async {
+  Future<void> _sendCallEndedNotification(int userId, String userType) async {
     final payload = {
       'userId': userId,
+      'userType': userType,
       'title': 'Call Ended',
       'body': 'The call has ended',
       'data': {
