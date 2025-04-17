@@ -4,13 +4,37 @@
 
 # Copy lib/agora folder
 
+# Copy calling.mp3 file to assets folder
+
+# in app_constants.dart :
+
+```
+// Push Notification
+static const String pushNotificationUri = '/api/v1/customer/push-notification';
+```
+
+# in date_helper.dart :
+
+```
+static String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes);
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
+}
+```
+
 # in pubspec.yaml :
 
 ```
 dependencies:
+  audioplayers: ^0.20.1
   agora_rtc_engine: ^6.5.1
   permission_handler: ^11.3.1
   agora_token_service: ^0.1.2
+  
+assets:
+  - assets/calling.mp3
 ```
 
 # in call_manager.dart :
