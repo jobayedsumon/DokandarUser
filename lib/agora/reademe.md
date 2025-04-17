@@ -2,6 +2,8 @@
 
 # JAVA VERSION: 17
 
+# Copy lib/agora folder
+
 # in pubspec.yaml :
 
 ```
