@@ -1,3 +1,16 @@
+# FLUTTER VERSION: 3.16.0
+
+# JAVA VERSION: 17
+
+# in pubspec.yaml :
+
+```
+dependencies:
+  agora_rtc_engine: ^6.5.1
+  permission_handler: ^11.3.1
+  agora_token_service: ^0.1.2
+```
+
 # in call_manager.dart :
 
 # update line **162 ```'callerType': 'customer'``` and line **211 ```userType: 'customer'```
