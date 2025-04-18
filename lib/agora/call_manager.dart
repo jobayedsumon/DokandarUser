@@ -16,6 +16,7 @@ import '../util/app_constants.dart';
 class CallManager {
   static const _appId = "003181bf5feb444897c5df04ec513194";
   static const _appCertificate = 'db8fb2e6f78c4271a6b7131f53b655df';
+  static const _loggedInUserType = 'customer';
 
   late RtcEngine _engine;
 
@@ -159,7 +160,7 @@ class CallManager {
         'type': 'incoming_call',
         'channel': channel,
         'callerId': _loggedInUser.id.toString(),
-        'callerType': 'customer',
+        'callerType': _loggedInUserType,
         'callerName': '${_loggedInUser.fName} ${_loggedInUser.lName}',
         'callerImage': _loggedInUser.image ??
             'https://placehold.co/100x100/white/red/png?text=${_loggedInUser.fName?[0]}+${_loggedInUser.lName?[0]}',
@@ -208,7 +209,7 @@ class CallManager {
     Get.off(
       () => VoiceCallScreen(
         userId: callerId,
-        userType: 'customer',
+        userType: _loggedInUserType,
         name: callerName,
         image: callerImage,
       ),
