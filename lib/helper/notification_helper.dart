@@ -171,7 +171,8 @@ class NotificationHelper {
               NotificationType.general) {
             Get.offAllNamed(
                 RouteHelper.getNotificationRoute(fromNotification: true));
-          } else {
+          } else if (message.data['type'] != 'incoming_call' &&
+              message.data['type'] != 'call_ended') {
             Get.offAllNamed(RouteHelper.getChatRoute(
                 notificationBody: notificationBody,
                 conversationID: notificationBody.conversationId,

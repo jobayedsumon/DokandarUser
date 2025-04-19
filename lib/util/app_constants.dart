@@ -192,8 +192,7 @@ class AppConstants {
   static const String removeItemCartUri = '/api/v1/customer/cart/remove-item';
 
   // Push Notification
-  static const String pushNotificationUri =
-      '/api/v1/customer/push-notification';
+  static const String pushNotificationUri = '/api/v1/push-notification';
 
   /// Shared Key
   static const String theme = '6ammart_theme';
