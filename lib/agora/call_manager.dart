@@ -153,9 +153,9 @@ class CallManager {
     final payload = {
       'userId': calleeId,
       'userType': calleeType,
-      'title': 'Incoming Call',
-      'body': 'You have an incoming call',
-      'data': {
+      'notification': {
+        'title': 'Incoming Call',
+        'body': 'You have an incoming call',
         'type': 'incoming_call',
         'channel': channel,
         'callerId': _loggedInUser.id.toString(),
@@ -233,9 +233,9 @@ class CallManager {
     final payload = {
       'userId': userId,
       'userType': userType,
-      'title': 'Call Ended',
-      'body': 'The call has ended',
-      'data': {
+      'notification': {
+        'title': 'Call Ended',
+        'body': 'The call has ended',
         'type': 'call_ended',
       },
     };
