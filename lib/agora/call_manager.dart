@@ -14,8 +14,8 @@ import '../data/api/api_client.dart';
 import '../util/app_constants.dart';
 
 class CallManager {
-  static const _appId = "003181bf5feb444897c5df04ec513194";
-  static const _appCertificate = 'db8fb2e6f78c4271a6b7131f53b655df';
+  static const _appId = "ed157f5704774db1b5f1911a854e2f74";
+  static const _appCertificate = 'd8d97f902a18410e86aa63452c4084ef';
 
   late RtcEngine _engine;
 

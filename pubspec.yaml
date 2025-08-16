@@ -4,7 +4,7 @@
 name: dokandar
 description: A Multi-vendor Food. Grocery, eCommerce, Pharmacy & Parcel service.
 publish_to: 'none' #
-version: 20.0.0+20
+version: 21.0.0+21
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
