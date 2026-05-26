@@ -4,7 +4,7 @@
 name: dokandar
 description: A Multi-vendor Food. Grocery, eCommerce, Pharmacy & Parcel service.
 publish_to: 'none' #
-version: 22.0.0+22
+version: 23.0.0+23
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
@@ -58,7 +58,7 @@ dependencies:
   youtube_player_iframe: ^3.1.0
   card_swiper: ^3.0.1
   audioplayers: ^0.20.1
-  agora_rtc_engine: ^6.5.1
+  agora_rtc_engine: ^6.5.4
   permission_handler: ^11.3.1
   agora_token_service: ^0.1.2
 

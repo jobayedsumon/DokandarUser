@@ -13,10 +13,10 @@ packages:
     dependency: "direct main"
     description:
       name: agora_rtc_engine
-      sha256: "458c4b535a619d573915a36aa634feccd076ac72782263004e9666cafc449021"
+      sha256: d9a88129b8fdc36ec5246331f36486b198dd7eb41ee68bfb54b289be8d60c6df
       url: "https://pub.dev"
     source: hosted
-    version: "6.5.1"
+    version: "6.5.4"
   agora_token_service:
     dependency: "direct main"
     description:
@@ -916,10 +916,10 @@ packages:
     dependency: transitive
     description:
       name: iris_method_channel
-      sha256: "99143ae77073ee8fd6c19d8f56ec59ba6c332000d8bea46bb9b6a89d83feca5c"
+      sha256: "114bbe541369add8dd0727858e7df5764f375e3fb88374ad487301733fddb57f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.5"
   js:
     dependency: transitive
     description:
@@ -1758,5 +1758,5 @@ packages:
     source: hosted
     version: "1.0.4"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
+  dart: ">=3.2.0 <4.0.0"
   flutter: ">=3.16.0"
