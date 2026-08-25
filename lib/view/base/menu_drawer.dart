@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:dokandar/controller/auth_controller.dart';
 import 'package:dokandar/controller/cart_controller.dart';
 import 'package:dokandar/controller/localization_controller.dart';
@@ -12,8 +10,10 @@ import 'package:dokandar/util/dimensions.dart';
 import 'package:dokandar/util/images.dart';
 import 'package:dokandar/util/styles.dart';
 import 'package:dokandar/view/base/confirmation_dialog.dart';
-import 'package:dokandar/view/screens/auth/sign_in_screen.dart';
 import 'package:dokandar/view/base/hover/on_hover.dart';
+import 'package:dokandar/view/screens/auth/sign_in_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MenuDrawer extends StatefulWidget {
   const MenuDrawer({Key? key}) : super(key: key);
@@ -133,27 +133,27 @@ class MenuDrawerState extends State<MenuDrawer>
           }));
     }
 
-    _menuList.add(Menu(
-        icon: Images.wallet,
-        title: 'Investment',
-        onTap: () {
-          if (Get.currentRoute.contains('investment')) {
-            Get.back();
-          }
-          Get.back();
-          Get.toNamed(RouteHelper.getInvestmentRoute());
-        }));
-
-    _menuList.add(Menu(
-        icon: Images.wallet,
-        title: 'My Investment',
-        onTap: () {
-          if (Get.currentRoute.contains('my-investment')) {
-            Get.back();
-          }
-          Get.back();
-          Get.toNamed(RouteHelper.getMyInvestmentRoute());
-        }));
+    // _menuList.add(Menu(
+    //     icon: Images.wallet,
+    //     title: 'Investment',
+    //     onTap: () {
+    //       if (Get.currentRoute.contains('investment')) {
+    //         Get.back();
+    //       }
+    //       Get.back();
+    //       Get.toNamed(RouteHelper.getInvestmentRoute());
+    //     }));
+    //
+    // _menuList.add(Menu(
+    //     icon: Images.wallet,
+    //     title: 'My Investment',
+    //     onTap: () {
+    //       if (Get.currentRoute.contains('my-investment')) {
+    //         Get.back();
+    //       }
+    //       Get.back();
+    //       Get.toNamed(RouteHelper.getMyInvestmentRoute());
+    //     }));
 
     if (Get.find<SplashController>().configModel!.loyaltyPointStatus == 1) {
       _menuList.add(Menu(
