@@ -27,7 +27,6 @@ import 'package:dokandar/controller/user_controller.dart';
 import 'package:dokandar/controller/wallet_controller.dart';
 import 'package:dokandar/controller/wishlist_controller.dart';
 import 'package:dokandar/data/api/api_client.dart';
-import 'package:dokandar/data/api/topup_api_client.dart';
 import 'package:dokandar/data/model/response/language_model.dart';
 import 'package:dokandar/data/repository/auth_repo.dart';
 import 'package:dokandar/data/repository/banner_repo.dart';
@@ -65,7 +64,6 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => sharedPreferences);
   Get.lazyPut(() => ApiClient(
       appBaseUrl: AppConstants.baseUrl, sharedPreferences: Get.find()));
-  Get.lazyPut(() => TopupApiClient());
 
   // Repository
   Get.lazyPut(

@@ -16,7 +16,9 @@ class TopupFormScreen extends StatefulWidget {
   final String type;
   final String operatorCode;
 
-  const TopupFormScreen({Key? key, required this.type, required this.operatorCode}) : super(key: key);
+  const TopupFormScreen(
+      {Key? key, required this.type, required this.operatorCode})
+      : super(key: key);
 
   @override
   State<TopupFormScreen> createState() => _TopupFormScreenState();
@@ -37,7 +39,7 @@ class _TopupFormScreenState extends State<TopupFormScreen> {
       Get.find<TopupController>().resetForm();
       Get.find<TopupController>().setOperator(widget.operatorCode);
       if (widget.type == TopupConstants.tabDataPack) {
-        Get.find<TopupController>().getDrives(type: 'drive');
+        Get.find<TopupController>().getDrives();
       }
     });
   }
@@ -94,7 +96,8 @@ class _TopupFormScreenState extends State<TopupFormScreen> {
   }
 
   Widget _buildInfoCard(BuildContext context, String operatorName) {
-    final walletBalance = Get.find<UserController>().userInfoModel?.walletBalance ?? 0;
+    final walletBalance =
+        Get.find<UserController>().userInfoModel?.walletBalance ?? 0;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
@@ -186,12 +189,11 @@ class _TopupFormScreenState extends State<TopupFormScreen> {
           return InkWell(
             onTap: () => controller.setSelectedDrive(drive),
             child: Container(
-              margin: const EdgeInsets.only(
-                  bottom: Dimensions.paddingSizeSmall),
+              margin:
+                  const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
               padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
               decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.circular(Dimensions.radiusDefault),
+                borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
                 border: Border.all(
                   color: isSelected
                       ? Theme.of(context).primaryColor
@@ -219,6 +221,42 @@ class _TopupFormScreenState extends State<TopupFormScreen> {
                               color: Theme.of(context).disabledColor,
                             ),
                           ),
+                        if (drive.duration?.isNotEmpty ?? false) ...[
+                          const SizedBox(
+                              height: Dimensions.paddingSizeExtraSmall),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Dimensions.paddingSizeSmall,
+                              vertical: Dimensions.paddingSizeExtraSmall,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.1),
+                              borderRadius:
+                                  BorderRadius.circular(Dimensions.radiusSmall),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.schedule,
+                                  size: Dimensions.fontSizeDefault,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                const SizedBox(
+                                    width: Dimensions.paddingSizeExtraSmall),
+                                Text(
+                                  '${'duration'.tr}: ${drive.duration}',
+                                  style: robotoMedium.copyWith(
+                                    fontSize: Dimensions.fontSizeSmall,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -294,7 +332,9 @@ class _TopupFormScreenState extends State<TopupFormScreen> {
       },
       selectedColor: Theme.of(context).primaryColor,
       labelStyle: robotoMedium.copyWith(
-        color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyLarge!.color,
+        color: isSelected
+            ? Colors.white
+            : Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );
   }

@@ -1164,5 +1164,6 @@
   "please_select_data_pack": "Please select a data pack",
   "please_fill_required_fields": "Please fill all required fields",
   "minimum_amount_is_9": "Minimum amount is 9 Taka",
-  "invalid_phone_number": "Please enter a valid 11 digit Bangladeshi mobile number"
+  "invalid_phone_number": "Please enter a valid 11 digit Bangladeshi mobile number",
+  "duration": "Duration"
 }

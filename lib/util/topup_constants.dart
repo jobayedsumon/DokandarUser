@@ -1,22 +1,17 @@
 /// Configuration constants for the Success TopUp integration.
 ///
-/// The public key and secret should ideally be delivered by your backend
-/// inside [ConfigModel] so the secret is never hard-coded in the client.
-/// The values below are used as a fallback only when the backend does not
-/// provide them.
+/// The app now proxies all Success TopUp calls through the Dokandar backend
+/// so the Success TopUp secret stays server-side and CORS is avoided.
 class TopupConstants {
-  // API base
-  // static const String baseUrl = 'https://api.successtopup.com';
-  static const String baseUrl = 'https://successtopup.com';
+  // Backend proxy endpoint URIs (relative to AppConstants.baseUrl)
+  static const String rechargeUri = '/api/v1/customer/topup/recharge';
+  static const String statusUri = '/api/v1/customer/topup/status';
+  static const String drivesUri = '/api/v1/customer/topup/drives';
+  static const String balanceUri = '/api/v1/customer/topup/balance';
+  static const String billPayUri = '/api/v1/customer/topup/bill-pay';
+  static const String sandboxTestUri = '/api/v1/customer/topup/sandbox-test';
 
-  static const String rechargeUri = '/api/recharge';
-  static const String statusUri = '/api/status';
-  static const String drivesUri = '/api/drives';
-  static const String balanceUri = '/api/balance';
-  static const String billPayUri = '/api/bill-pay';
-  static const String sandboxTestUri = '/api/sandbox/test';
-
-  // Fallback credentials (replace with real values or, preferably, backend config)
+  // Fallback credentials kept empty; the backend stores the real credentials.
   static const String fallbackKey = '';
   static const String fallbackSecret = '';
 

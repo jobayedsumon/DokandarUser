@@ -1,18 +1,11 @@
-import 'package:dokandar/data/api/topup_api_client.dart';
+import 'package:dokandar/data/api/api_client.dart';
 import 'package:dokandar/util/topup_constants.dart';
 import 'package:get/get.dart';
 
 class TopupRepo {
-  final TopupApiClient apiClient;
+  final ApiClient apiClient;
 
   TopupRepo({required this.apiClient});
-
-  String _key(String? configKey) =>
-      (configKey?.isNotEmpty ?? false) ? configKey! : TopupConstants.fallbackKey;
-
-  String _secret(String? configSecret) => (configSecret?.isNotEmpty ?? false)
-      ? configSecret!
-      : TopupConstants.fallbackSecret;
 
   Future<Response> recharge({
     required String number,
@@ -21,8 +14,6 @@ class TopupRepo {
     required num amount,
     String? packageId,
     required String trxid,
-    required String key,
-    required String secret,
   }) async {
     final body = {
       'number': number,
@@ -30,8 +21,6 @@ class TopupRepo {
       'operator': operator,
       'amount': amount,
       'trxid': trxid,
-      'successtopup_key': _key(key),
-      'successtopup_secret': _secret(secret),
     };
     if (packageId != null && packageId.isNotEmpty) {
       body['package_id'] = packageId;
@@ -41,26 +30,17 @@ class TopupRepo {
 
   Future<Response> checkStatus({
     required String trxid,
-    required String key,
-    required String secret,
   }) async {
     return await apiClient.postData(TopupConstants.statusUri, {
       'trxid': trxid,
-      'successtopup_key': _key(key),
-      'successtopup_secret': _secret(secret),
     });
   }
 
   Future<Response> getDrives({
     String? operator,
     String? type,
-    required String key,
-    required String secret,
   }) async {
-    final body = {
-      'successtopup_key': _key(key),
-      'successtopup_secret': _secret(secret),
-    };
+    final body = <String, dynamic>{};
     if (operator != null && operator.isNotEmpty) {
       body['operator'] = operator;
     }
@@ -70,14 +50,8 @@ class TopupRepo {
     return await apiClient.postData(TopupConstants.drivesUri, body);
   }
 
-  Future<Response> getBalance({
-    required String key,
-    required String secret,
-  }) async {
-    return await apiClient.postData(TopupConstants.balanceUri, {
-      'successtopup_key': _key(key),
-      'successtopup_secret': _secret(secret),
-    });
+  Future<Response> getBalance() async {
+    return await apiClient.getData(TopupConstants.balanceUri);
   }
 
   Future<Response> payBill({
@@ -88,8 +62,6 @@ class TopupRepo {
     required String monthName,
     String? note,
     required String trxid,
-    required String key,
-    required String secret,
   }) async {
     final body = {
       'billOperator': billOperator,
@@ -98,8 +70,6 @@ class TopupRepo {
       'mobileNumber': mobileNumber,
       'monthName': monthName,
       'trxid': trxid,
-      'successtopup_key': _key(key),
-      'successtopup_secret': _secret(secret),
     };
     if (note != null && note.isNotEmpty) {
       body['note'] = note;

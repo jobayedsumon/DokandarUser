@@ -11,6 +11,8 @@ class DriveModel {
   final String? name;
   final String? description;
   final num? amount;
+  final num? commission;
+  final String? duration;
   final String? operator;
   final String? type;
 
@@ -19,21 +21,27 @@ class DriveModel {
     this.name,
     this.description,
     this.amount,
+    this.commission,
+    this.duration,
     this.operator,
     this.type,
   });
 
   factory DriveModel.fromJson(Map<String, dynamic> json) {
     return DriveModel(
-      id: json['id']?.toString(),
-      name: json['name']?.toString(),
+      id: (json['driveId'] ?? json['id'])?.toString(),
+      name: (json['title'] ?? json['name'])?.toString(),
       description: json['description']?.toString(),
-      amount: json['amount'] is num
-          ? json['amount'] as num
-          : num.tryParse(json['amount']?.toString() ?? ''),
+      amount: _toNum(json['price'] ?? json['amount']),
+      commission: _toNum(json['commission']),
+      duration: json['duration']?.toString(),
       operator: json['operator']?.toString(),
       type: json['type']?.toString(),
     );
+  }
+
+  static num? _toNum(dynamic value) {
+    return value is num ? value : num.tryParse(value?.toString() ?? '');
   }
 }
 

@@ -37,6 +37,9 @@ class TopupController extends GetxController implements GetxService {
   String _lastStatus = '';
   String get lastStatus => _lastStatus;
 
+  bool get isEnabled =>
+      (Get.find<SplashController>().configModel?.successTopupStatus ?? 0) == 1;
+
   void resetForm() {
     _selectedDrive = null;
     _selectedOperator = '';
@@ -59,38 +62,26 @@ class TopupController extends GetxController implements GetxService {
     update();
   }
 
-  String _key() => Get.find<SplashController>().configModel?.successTopupKey ?? '';
-
-  String _secret() =>
-      Get.find<SplashController>().configModel?.successTopupSecret ?? '';
-
-  bool get isEnabled =>
-      (Get.find<SplashController>().configModel?.successTopupStatus ?? 0) == 1;
-
-  bool _hasCredentials() {
-    final key = _key();
-    final secret = _secret();
-    return key.isNotEmpty && secret.isNotEmpty;
-  }
-
   String _generateTrxId() {
     final ms = DateTime.now().millisecondsSinceEpoch;
     final rnd = Random().nextInt(9999).toString().padLeft(4, '0');
     return 'TU-$ms-$rnd';
   }
 
-  Future<bool> getDrives({String? operator, String? type}) async {
-    if (!_hasCredentials()) {
+  void _checkEnabled() {
+    if (!isEnabled) {
       showCustomSnackBar('success_topup_credentials_not_configured'.tr);
-      return false;
     }
+  }
+
+  Future<bool> getDrives({String? operator, String? type}) async {
+    _checkEnabled();
+    if (!isEnabled) return false;
     _isLoading = true;
     update();
     Response response = await topupRepo.getDrives(
       operator: operator ?? _selectedOperator,
       type: type,
-      key: _key(),
-      secret: _secret(),
     );
     _isLoading = false;
     if (response.statusCode == 200 && response.body != null) {
@@ -110,18 +101,15 @@ class TopupController extends GetxController implements GetxService {
   }
 
   Future<bool> getBalance() async {
-    if (!_hasCredentials()) return false;
+    _checkEnabled();
+    if (!isEnabled) return false;
     _isLoading = true;
     update();
-    Response response = await topupRepo.getBalance(
-      key: _key(),
-      secret: _secret(),
-    );
+    Response response = await topupRepo.getBalance();
     _isLoading = false;
     if (response.statusCode == 200 && response.body != null) {
       if (response.body['result'] == true) {
-        _topupBalance =
-            (response.body['balance'] ?? 0).toDouble();
+        _topupBalance = (response.body['balance'] ?? 0).toDouble();
       }
       update();
       return true;
@@ -137,10 +125,8 @@ class TopupController extends GetxController implements GetxService {
     required num amount,
     String? packageId,
   }) async {
-    if (!_hasCredentials()) {
-      showCustomSnackBar('success_topup_credentials_not_configured'.tr);
-      return false;
-    }
+    _checkEnabled();
+    if (!isEnabled) return false;
     if (_selectedOperator.isEmpty) {
       showCustomSnackBar('please_select_operator'.tr);
       return false;
@@ -164,8 +150,6 @@ class TopupController extends GetxController implements GetxService {
       amount: amount,
       packageId: packageId,
       trxid: trxid,
-      key: _key(),
-      secret: _secret(),
     );
     _isLoading = false;
     update();
@@ -197,10 +181,8 @@ class TopupController extends GetxController implements GetxService {
     required String monthName,
     String? note,
   }) async {
-    if (!_hasCredentials()) {
-      showCustomSnackBar('success_topup_credentials_not_configured'.tr);
-      return false;
-    }
+    _checkEnabled();
+    if (!isEnabled) return false;
 
     final user = Get.find<UserController>().userInfoModel;
     final walletBalance = user?.walletBalance ?? 0;
@@ -221,8 +203,6 @@ class TopupController extends GetxController implements GetxService {
       monthName: monthName,
       note: note,
       trxid: trxid,
-      key: _key(),
-      secret: _secret(),
     );
     _isLoading = false;
     update();
@@ -247,14 +227,11 @@ class TopupController extends GetxController implements GetxService {
   }
 
   Future<bool> checkStatus(String trxid) async {
-    if (!_hasCredentials()) return false;
+    _checkEnabled();
+    if (!isEnabled) return false;
     _isLoading = true;
     update();
-    Response response = await topupRepo.checkStatus(
-      trxid: trxid,
-      key: _key(),
-      secret: _secret(),
-    );
+    Response response = await topupRepo.checkStatus(trxid: trxid);
     _isLoading = false;
     if (response.statusCode == 200 && response.body != null) {
       _lastStatus = response.body['status']?.toString() ?? '';
