@@ -22,10 +22,12 @@ import 'package:dokandar/controller/search_controller.dart';
 import 'package:dokandar/controller/splash_controller.dart';
 import 'package:dokandar/controller/store_controller.dart';
 import 'package:dokandar/controller/theme_controller.dart';
+import 'package:dokandar/controller/topup_controller.dart';
 import 'package:dokandar/controller/user_controller.dart';
 import 'package:dokandar/controller/wallet_controller.dart';
 import 'package:dokandar/controller/wishlist_controller.dart';
 import 'package:dokandar/data/api/api_client.dart';
+import 'package:dokandar/data/api/topup_api_client.dart';
 import 'package:dokandar/data/model/response/language_model.dart';
 import 'package:dokandar/data/repository/auth_repo.dart';
 import 'package:dokandar/data/repository/banner_repo.dart';
@@ -46,6 +48,7 @@ import 'package:dokandar/data/repository/rider_repo.dart';
 import 'package:dokandar/data/repository/search_repo.dart';
 import 'package:dokandar/data/repository/splash_repo.dart';
 import 'package:dokandar/data/repository/store_repo.dart';
+import 'package:dokandar/data/repository/topup_repo.dart';
 import 'package:dokandar/data/repository/user_repo.dart';
 import 'package:dokandar/data/repository/wallet_repo.dart';
 import 'package:dokandar/data/repository/wishlist_repo.dart';
@@ -62,6 +65,7 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => sharedPreferences);
   Get.lazyPut(() => ApiClient(
       appBaseUrl: AppConstants.baseUrl, sharedPreferences: Get.find()));
+  Get.lazyPut(() => TopupApiClient());
 
   // Repository
   Get.lazyPut(
@@ -92,6 +96,7 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => ParcelRepo(apiClient: Get.find()));
   Get.lazyPut(
       () => WalletRepo(apiClient: Get.find(), sharedPreferences: Get.find()));
+  Get.lazyPut(() => TopupRepo(apiClient: Get.find()));
   Get.lazyPut(
       () => ChatRepo(apiClient: Get.find(), sharedPreferences: Get.find()));
   Get.lazyPut(
@@ -122,6 +127,7 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => CampaignController(campaignRepo: Get.find()));
   Get.lazyPut(() => ParcelController(parcelRepo: Get.find()));
   Get.lazyPut(() => WalletController(walletRepo: Get.find()));
+  Get.lazyPut(() => TopupController(topupRepo: Get.find()));
   Get.lazyPut(() => ChatController(chatRepo: Get.find()));
   Get.lazyPut(() => RiderController(riderRepo: Get.find()));
   Get.lazyPut(() => CarSelectionController(carSelectionRepo: Get.find()));

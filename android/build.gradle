@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = '1.8.22'
+    ext.kotlin_version = '2.0.21'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:8.9.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.13'
+        classpath 'com.google.gms:google-services:4.4.2'
     }
 }
 
@@ -29,6 +29,73 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+}
+
+// Force all plugin subprojects to use a single AGP + Kotlin plugin version.
+// Many older Flutter plugins declare their own (very old) AGP and Kotlin Gradle
+// plugin in their buildscript block, which is incompatible with Gradle 8.x /
+// AGP 8.x. This forces resolution to the versions used by the root project.
+subprojects {
+    buildscript {
+        configurations.configureEach {
+            resolutionStrategy {
+                force 'com.android.tools.build:gradle:8.9.1'
+                force 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
+            }
+        }
+    }
+}
+
+// Some older plugins (e.g. audio_session) compile Java with `-Werror`. Newer
+// SDKs (API 36) introduce fresh deprecation warnings, turning the build red.
+// Strip `-Werror` at execution time (doFirst) so plugin-added args are removed
+// regardless of configuration order.
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        doFirst {
+            options.compilerArgs -= '-Werror'
+        }
+    }
+}
+
+// AGP 8 requires a `namespace` for every module and a recent `compileSdk`.
+// Older plugins rely on the deprecated `package` attribute in their manifest
+// and pin a low compileSdk, so set sane defaults after each plugin is evaluated.
+// `:app` is already evaluated (via evaluationDependsOn above) and configures its
+// own namespace/compileSdk, so only register the hook for not-yet-evaluated modules.
+subprojects {
+    if (!project.state.executed) {
+        afterEvaluate { project ->
+            if (project.plugins.hasPlugin("com.android.application") ||
+                    project.plugins.hasPlugin("com.android.library")) {
+                project.android {
+                    if (namespace == null) {
+                        namespace project.group ?: ''
+                    }
+                    if (compileSdk == null || compileSdk < 36) {
+                        compileSdk 36
+                    }
+                    // AGP 8 disables BuildConfig generation by default; some
+                    // plugins (e.g. firebase_core) declare buildConfigField.
+                    buildFeatures {
+                        buildConfig true
+                    }
+                    // Align Java + Kotlin to JVM 17. Older plugins pin Java 1.8
+                    // while Kotlin 2.0 defaults to 17, which AGP 8 rejects as a
+                    // JVM-target mismatch.
+                    compileOptions {
+                        sourceCompatibility JavaVersion.VERSION_17
+                        targetCompatibility JavaVersion.VERSION_17
+                    }
+                    if (project.plugins.hasPlugin("kotlin-android")) {
+                        kotlinOptions {
+                            jvmTarget = '17'
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {

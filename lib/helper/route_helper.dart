@@ -92,6 +92,8 @@ import '../view/screens/investment/investment_details_screen.dart';
 import '../view/screens/investment/investment_screen.dart';
 import '../view/screens/investment/my_investment_details_screen.dart';
 import '../view/screens/investment/my_investment_screen.dart';
+import '../view/screens/topup/topup_form_screen.dart';
+import '../view/screens/topup/topup_screen.dart';
 
 class RouteHelper {
   static const String initial = '/';
@@ -167,6 +169,8 @@ class RouteHelper {
   static const String offlinePaymentScreen = '/offline-payment-screen';
   static const String flashSaleDetailsScreen = '/flash-sale-details-screen';
   static const String guestTrackOrderScreen = '/guest-track-order-screen';
+  static const String topup = '/topup';
+  static const String topupForm = '/topup-form';
 
   static String getInitialRoute({bool fromSplash = false}) =>
       '$initial?from-splash=$fromSplash';
@@ -359,6 +363,11 @@ class RouteHelper {
   static String getWalletRoute(bool fromWallet,
           {String? fundStatus, String? token}) =>
       '$wallet?page=${fromWallet ? 'wallet' : 'loyalty_points'}&payment_status=$fundStatus&token=$token';
+
+  static String getTopupRoute() => topup;
+
+  static String getTopupFormRoute(String type, String operatorCode) =>
+      '$topupForm?type=$type&operator=$operatorCode';
 
   static String getInvestmentRoute() => investment;
 
@@ -842,6 +851,13 @@ class RouteHelper {
             token: Get.parameters['token'],
           ));
         }),
+    GetPage(name: topup, page: () => getRoute(const TopupScreen())),
+    GetPage(
+        name: topupForm,
+        page: () => getRoute(TopupFormScreen(
+              type: Get.parameters['type'] ?? '',
+              operatorCode: Get.parameters['operator'] ?? '',
+            ))),
     GetPage(
         name: investment,
         page: () {

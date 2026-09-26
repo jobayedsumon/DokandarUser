@@ -75,6 +75,9 @@ class ConfigModel {
   bool? guestCheckoutStatus;
   double investmentReferralBonus = 0;
   double investmentWithdrawalCharge = 0;
+  int? successTopupStatus;
+  String? successTopupKey;
+  String? successTopupSecret;
 
   ConfigModel(
       {this.businessName,
@@ -150,6 +153,9 @@ class ConfigModel {
         this.guestCheckoutStatus,
         this.investmentReferralBonus = 0,
         this.investmentWithdrawalCharge = 0,
+        this.successTopupStatus,
+        this.successTopupKey,
+        this.successTopupSecret,
       });
 
   ConfigModel.fromJson(Map<String, dynamic> json) {
@@ -261,6 +267,9 @@ class ConfigModel {
     guestCheckoutStatus = json['guest_checkout_status'] == 1;
     investmentReferralBonus = json['investment_referral_bonus']?.toDouble() ?? 0;
     investmentWithdrawalCharge = json['investment_withdrawal_charge']?.toDouble() ?? 0;
+    successTopupStatus = json['success_topup_status'];
+    successTopupKey = json['success_topup_key']?.toString();
+    successTopupSecret = json['success_topup_secret']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -358,6 +367,9 @@ class ConfigModel {
     data['guest_checkout_status'] = guestCheckoutStatus;
     data['investment_referral_bonus'] = investmentReferralBonus;
     data['investment_withdrawal_charge'] = investmentWithdrawalCharge;
+    data['success_topup_status'] = successTopupStatus;
+    data['success_topup_key'] = successTopupKey;
+    data['success_topup_secret'] = successTopupSecret;
     return data;
   }
 }

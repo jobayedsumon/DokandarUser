@@ -274,7 +274,7 @@ class _MenuScreenNewState extends State<MenuScreenNew> {
                           ? PortionWidget(
                               icon: Images.walletIcon,
                               title: 'my_wallet'.tr,
-                              hideDivider: true,
+                              hideDivider: false,
                               route: RouteHelper.getWalletRoute(true),
                               suffix: !isLoggedIn
                                   ? null
@@ -283,6 +283,17 @@ class _MenuScreenNewState extends State<MenuScreenNew> {
                                           ? userController
                                               .userInfoModel!.walletBalance
                                           : 0),
+                            )
+                          : const SizedBox(),
+                      (Get.find<SplashController>()
+                                  .configModel!
+                                  .successTopupStatus ==
+                              1)
+                          ? PortionWidget(
+                              icon: Images.pointIcon,
+                              title: 'topup_services'.tr,
+                              hideDivider: true,
+                              route: RouteHelper.getTopupRoute(),
                             )
                           : const SizedBox(),
                     ]),

@@ -133,6 +133,16 @@ class MenuDrawerState extends State<MenuDrawer>
           }));
     }
 
+    if (Get.find<SplashController>().configModel!.successTopupStatus == 1) {
+      _menuList.add(Menu(
+          icon: Images.pointIcon,
+          title: 'topup_services'.tr,
+          onTap: () {
+            Get.back();
+            Get.toNamed(RouteHelper.getTopupRoute());
+          }));
+    }
+
     // _menuList.add(Menu(
     //     icon: Images.wallet,
     //     title: 'Investment',
